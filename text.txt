@@ -1,0 +1,4 @@
+curl http://localhost:3000/api/auth/perfil \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sIjoiY2xpZW50ZSIsImlhdCI6MTc5MjcwMTAwOSwiZXhwIjoxNzkzMzA1ODA5fQ.jYTM0RNJLpAxtkYwcXU17jg8HRkBhn6rWAzqe4c2_g0"
+
+  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sIjoiY2xpZW50ZSIsImlhdCI6MTc5MjcwMTAwOSwiZXhwIjoxNzkzMzA1ODA5fQ.jYTM0RNJLpAxtkYwcXU17jg8HRkBhn6rWAzqe4c2_g0

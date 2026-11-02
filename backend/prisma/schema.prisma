@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  email        String   @unique
+  passwordHash String
+  rol          String   @default("cliente") // "cliente" | "admin"
+  clase        String?  // "guerrero" | "mago" | "arquero"
+  nivel        Int      @default(1)
+  oro          Int      @default(1000)
+  creadoEn     DateTime @default(now())
+  ordenes      Orden[]
+}
+
+model Categoria {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
+  productos Producto[]
+}
+
+model Producto {
+  id             Int         @id @default(autoincrement())
+  nombre         String
+  descripcion    String
+  precio         Int         // en monedas de oro
+  stock          Int
+  imagen         String?
+  rareza         String      // "comun" | "raro" | "epico" | "legendario"
+  elemento       String?     // "fuego" | "hielo" | "rayo" | "sombra" | "sagrado"
+  nivelRequerido Int         @default(1)
+  poder          Int         @default(0)
+  encantamiento  String?
+  creadoEn       DateTime    @default(now())
+  categoriaId    Int
+  categoria      Categoria   @relation(fields: [categoriaId], references: [id])
+  items          OrdenItem[]
+}
+
+model Orden {
+  id        Int         @id @default(autoincrement())
+  total     Int
+  estado    String      @default("pendiente") // "pendiente" | "enviada" | "entregada" | "cancelada"
+  creadaEn  DateTime    @default(now())
+  usuarioId Int
+  usuario   Usuario     @relation(fields: [usuarioId], references: [id])
+  items     OrdenItem[]
+}
+
+model OrdenItem {
+  id             Int      @id @default(autoincrement())
+  cantidad       Int
+  precioUnitario Int
+  ordenId        Int
+  orden          Orden    @relation(fields: [ordenId], references: [id])
+  productoId     Int
+  producto       Producto @relation(fields: [productoId], references: [id])
+}

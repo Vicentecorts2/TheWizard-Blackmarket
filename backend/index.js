@@ -1,10 +1,11 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
+import authRoutes from './src/routes/auth.routes.js';
+import productosRoutes from './src/routes/productos.routes.js';
+import categoriasRoutes from './src/routes/categorias.routes.js';
 
 const app = express();
-const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
@@ -14,16 +15,13 @@ app.get('/api/salud', (req, res) => {
   res.json({ estado: 'La forja está encendida' });
 });
 
-app.get('/api/productos', async (req, res) => {
-  try {
-    const productos = await prisma.producto.findMany({
-      include: { categoria: true },
-    });
-    res.json(productos);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener los productos' });
-  }
+app.use('/api/auth', authRoutes);
+app.use('/api/productos', productosRoutes);
+app.use('/api/categorias', categoriasRoutes);
+
+// Cualquier ruta que no exista
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
 app.listen(PORT, () => {

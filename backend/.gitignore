@@ -3,4 +3,5 @@ node_modules/
 prisma/dev.db
 prisma/dev.db-journal
 uploads/
-./text.txt
+text.txt
+generated/

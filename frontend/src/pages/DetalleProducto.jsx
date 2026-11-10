@@ -1,18 +1,27 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api, mensajeError, urlImagen } from '../api/cliente';
+import { useAuth } from '../context/auth';
+import { useCarrito } from '../context/carrito';
 import { RAREZAS, ELEMENTOS, formatoOro } from '../utils/formato';
 
 export default function DetalleProducto() {
   const { id } = useParams();
+  const { usuario } = useAuth();
+  const { items, agregar } = useCarrito();
+
   const [producto, setProducto] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [cantidad, setCantidad] = useState(1);
+  const [agregado, setAgregado] = useState(false);
 
   useEffect(() => {
     async function cargar() {
       setCargando(true);
       setError('');
+      setAgregado(false);
+      setCantidad(1);
       try {
         const res = await api.get(`/productos/${id}`);
         setProducto(res.data);
@@ -39,6 +48,16 @@ export default function DetalleProducto() {
   }
 
   const imagen = urlImagen(producto.imagen);
+  const enCarrito = items.find((i) => i.producto.id === producto.id)?.cantidad || 0;
+  const disponibles = producto.stock - enCarrito;
+  const nivelInsuficiente = usuario && usuario.nivel < producto.nivelRequerido;
+
+  function agregarAlCarrito() {
+    const cantidadValida = Math.min(Math.max(1, cantidad), disponibles);
+    agregar(producto, cantidadValida);
+    setCantidad(1);
+    setAgregado(true);
+  }
 
   return (
     <main className="contenedor">
@@ -75,9 +94,41 @@ export default function DetalleProducto() {
 
           <p className="precio-grande">{formatoOro(producto.precio)}</p>
 
-          <button className="boton boton-principal" disabled>
-            Agregar al carrito (próximamente)
-          </button>
+          {nivelInsuficiente && (
+            <p className="aviso">
+              Necesitas nivel {producto.nivelRequerido} para empuñar este objeto (tienes nivel {usuario.nivel}).
+            </p>
+          )}
+
+          {producto.stock === 0 ? (
+            <button className="boton" disabled>Agotado</button>
+          ) : disponibles === 0 ? (
+            <p className="aviso">Ya tienes en el carrito todas las unidades disponibles.</p>
+          ) : (
+            <div className="comprar">
+              <input
+                type="number"
+                min="1"
+                max={disponibles}
+                value={cantidad}
+                onChange={(e) => setCantidad(Number(e.target.value))}
+                aria-label="Cantidad"
+              />
+              <button
+                className="boton boton-principal"
+                onClick={agregarAlCarrito}
+                disabled={nivelInsuficiente}
+              >
+                Agregar al carrito
+              </button>
+            </div>
+          )}
+
+          {agregado && (
+            <p className="exito">
+              ¡Agregado al carrito! <Link to="/carrito">Ver carrito →</Link>
+            </p>
+          )}
         </div>
       </div>
     </main>

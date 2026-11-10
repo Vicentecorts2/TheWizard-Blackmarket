@@ -6,12 +6,14 @@ import DetalleProducto from './pages/DetalleProducto';
 import Login from './pages/Login';
 import Registro from './pages/Registro';
 import Perfil from './pages/Perfil';
+import Carrito from './pages/Carrito';
 
 export default function App() {
   return (
     <>
       <Navbar />
       <Routes>
+        <Route path="/carrito" element={<Carrito />} />
         <Route path="/" element={<Catalogo />} />
         <Route path="/producto/:id" element={<DetalleProducto />} />
         <Route path="/login" element={<Login />} />

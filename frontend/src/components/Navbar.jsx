@@ -26,6 +26,9 @@ export default function Navbar() {
 
         {usuario ? (
           <>
+          {usuario.rol === 'admin' && (
+  <Link to="/admin" className="nav-forja">⚒️ Forja</Link>
+)}
             <Link to="/perfil" className="nav-usuario">
               <span>{usuario.nombre}</span>
               <span className="nav-stats">

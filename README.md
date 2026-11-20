@@ -33,7 +33,7 @@ Proyecto de portafolio construido con **React**, **Node.js/Express**, **Prisma**
 | Backend | Node.js, Express, Prisma ORM |
 | Base de datos | SQLite |
 | Autenticación | JSON Web Tokens (JWT), bcryptjs |
-| Archivos | Multer |
+| Archivos | Multer, AWS SDK v3 (S3), Floci como emulador local |
 
 ---
 
@@ -60,6 +60,7 @@ Proyecto de portafolio construido con **React**, **Node.js/Express**, **Prisma**
 - **Mensajes de login neutros.** El login responde lo mismo si el email no existe o si la contraseña es incorrecta, para no revelar qué cuentas existen.
 - **Productos con historial no se eliminan.** Un objeto que ya aparece en órdenes no puede borrarse; se deja con stock 0.
 - **Imágenes sin archivos huérfanos.** Si la validación falla después de subir una imagen, o si se reemplaza por otra, el archivo anterior se elimina del disco.
+- - **Almacenamiento intercambiable.** Las imágenes se guardan en una carpeta local o en AWS S3 según la variable `STORAGE`. Todo el acceso pasa por un único módulo (patrón adaptador), así que cambiar de proveedor no afecta a los controladores. En desarrollo, S3 se emula localmente con [Floci](https://floci.io).
 
 > **Trade-off conocido:** el token JWT se guarda en `localStorage` por simplicidad. En producción sería más seguro usar una cookie `httpOnly`, que no puede ser leída por JavaScript ante un ataque XSS.
 
@@ -93,6 +94,16 @@ TheWizard-Blackmarket/
 ---
 
 ## 🚀 Instalación y uso
+
+### Opcional: imágenes en S3 con Floci
+
+Por defecto las imágenes se guardan en `backend/uploads/`. Para usar S3 emulado localmente (requiere Docker):
+
+```bash
+curl -fsSL https://floci.io/install.sh | sh
+floci start
+```
+En `backend/.env` cambia `STORAGE=local` por `STORAGE=s3` y reinicia el backend. El bucket se crea automáticamente.
 
 ### Requisitos
 - [Node.js](https://nodejs.org/) versión LTS
